@@ -55,7 +55,7 @@ class RiaParser:
             return []
 
 
-    def parse_ria_range(self, dates, news_cache_dir="news_cache", delay=0.1):
+    def parse_ria_range(self, dates, news_cache_dir="./../news_cache", delay=0.1):
         """
         Парсит РИА за список дат с кэшированием.
         При повторном запуске грузит только отсутствующие даты.
