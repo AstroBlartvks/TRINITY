@@ -7,7 +7,7 @@ from transformers import AutoTokenizer, AutoModel
 
 
 class RuBERT:
-    def __init__(self, bert_dim=768, device="cuda", embd_cache="./embd_cache"):
+    def __init__(self, bert_dim=768, device="cuda", embd_cache="./../embd_cache"):
         self.embd_cache = embd_cache
         self.bert_dim = bert_dim
         self.device = device
