@@ -11,7 +11,7 @@ class RiaParser:
     def __init__(self):
         ...
 
-    def parse_ria_day(self, date_str):
+    def parse_ria_day(self, date_str: str):
         """
         Парсит заголовки РИА новостей за один день.
         date_str: '2022-01-15'
