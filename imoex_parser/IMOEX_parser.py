@@ -1,6 +1,11 @@
+from datetime import datetime
+
 import requests
 import json
 import time
+
+from tqdm.notebook import tqdm
+
 
 class IMOEXParser:
     def __init__(self):
@@ -14,14 +19,28 @@ class IMOEXParser:
         data = json.loads(json_data.text)
         return data['history']['data'][1:], data['history']['data'][-1][2]
 
-    def start_parse_data(self, fr: str, to: str, delay: int=2.0):
-        try:
-            while fr < to:
-                data, fr = self.parse_data(fr, to)
-                self.all_data += data
-        except Exception as exp:
-            time.sleep(delay)
-            print(str(exp), fr, to)
+    def start_parse_data(self, fr: str, to: str, delay: int = 2.0):
+        start_date = datetime.strptime(fr, "%Y-%m-%d")
+        end_date = datetime.strptime(to, "%Y-%m-%d")
+        total_days = (end_date - start_date).days
+
+        with tqdm(total=total_days, desc="Парсинг IMOEX", unit="дн") as pbar:
+            current = fr
+            while (datetime.strptime(to, "%Y-%m-%d") - datetime.strptime(current, "%Y-%m-%d")).days > 1:
+                try:
+                    data, new_fr = self.parse_data(current, to)
+                    self.all_data += data
+                    try:
+                        passed = (datetime.strptime(new_fr, "%Y-%m-%d") - datetime.strptime(current, "%Y-%m-%d")).days
+                        pbar.update(max(passed, 0))
+                    except ValueError:
+                        pass
+
+                    current = new_fr
+                    pbar.set_postfix({"записей": len(self.all_data)})
+                except Exception as exp:
+                    time.sleep(delay)
+                    tqdm.write(f"{exp} | {current} -> {to}")
 
     def get_data(self):
         return self.all_data
